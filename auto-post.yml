@@ -1,0 +1,48 @@
+name: Auto Meme Post @jagruk_aadmi - 8x Daily
+
+on:
+  schedule:
+    - cron: '0 0 * * *'    # 5:30 AM IST
+    - cron: '0 3 * * *'    # 8:30 AM IST
+    - cron: '0 6 * * *'    # 11:30 AM IST
+    - cron: '0 9 * * *'    # 2:30 PM IST
+    - cron: '0 12 * * *'   # 5:30 PM IST
+    - cron: '0 15 * * *'   # 8:30 PM IST
+    - cron: '0 18 * * *'   # 11:30 PM IST
+    - cron: '0 21 * * *'   # 2:30 AM IST
+  workflow_dispatch:
+
+jobs:
+  post-meme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests Pillow moviepy
+
+      - name: Run Meme Bot
+        env:
+          PAGE_ACCESS_TOKEN: ${{ secrets.PAGE_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_UPLOAD_PRESET: ${{ secrets.CLOUDINARY_UPLOAD_PRESET }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          python FINAL_JAGRUK_BOT.py
+
+      - name: Save history
+        run: |
+          git config --global user.name "MemeBot"
+          git config --global user.email "bot@jagruk.com"
+          git add posted_history.json performance.json || true
+          git commit -m "Update history [skip ci]" || true
+          git push || true

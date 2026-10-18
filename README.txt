@@ -1,0 +1,1 @@
+Put your trending mp3 songs here - bot will auto-pick one. Name them like trending1.mp3, trending2.mp3
